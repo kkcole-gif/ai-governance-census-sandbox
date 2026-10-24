@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as below. Cite the Zenodo DOI once a release is archived."
+title: "TEST RECORD (Sandbox) AI Governance Census of US Colleges and Universities"
+type: dataset
+version: "0.1-pilot"
+date-released: "2026-10-24"
+authors:
+  - family-names: Cole
+    given-names: Kirsti
+    affiliation: "North Carolina State University"
+    email: "kkcole2@ncsu.edu"
+license: CC-BY-4.0
+abstract: "A stratified census of the documents through which US colleges and universities govern artificial intelligence, drawn from the 2025 Carnegie Classifications (334 institutions, seed 20261023)."
+keywords:
+  - artificial intelligence
+  - higher education
+  - institutional policy
+  - AI governance
+  - Carnegie Classifications
