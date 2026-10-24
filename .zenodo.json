@@ -1,7 +1,7 @@
 {
-  "title": "TEST RECORD (Sandbox) AI Governance Census of US Colleges and Universities",
+  "title": "TEST RECORD (Sandbox): AI Governance Census of US Colleges and Universities",
   "upload_type": "dataset",
-  "description": "Sandbox test of the release pipeline. Not a real record. A stratified census of the documents through which US colleges and universities govern artificial intelligence, drawn from the 2025 Carnegie Classifications (334 institutions, seed 20261023). Each document is recorded with its issuing office, document type, standalone or embedded status, dates, a quoted passage, and verification status.",
+  "description": "Sandbox test of the release record. Not the dataset of record. A stratified census of the documents through which US colleges and universities govern artificial intelligence, drawn from the 2025 Carnegie Classifications (334 institutions, seed 20261023). Each document is recorded with its issuing office, document type, standalone or embedded status, dates, a quoted passage, and verification status.",
   "creators": [
     {
       "name": "Cole, Kirsti",
