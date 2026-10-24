@@ -13,7 +13,7 @@ The unit of record is the document, and documents nest within institutions. One 
 A document enters the inventory when it passes all four tests.
 
 1. Institutional authorship. A university office, committee, senate, school, library, teaching center, IT unit, student conduct office, student government, or system office issued it. An individual instructor's syllabus or blog does not qualify. The issuing office is read from the document itself, never from the hosting domain.
-2. Governance function. The document tells readers what to do, what is permitted or required, or what the institution has decided. FAQs, syllabus statement templates, decision trees, and task force reports with recommendations qualify. News stories, webinars, and research publications do not. Where a news item reports guidance, the census traces the reported guidance to its source document and records the source.
+2. Governance function. The document tells readers what to do, what is permitted or required, or what the institution has decided. FAQs, syllabus statement templates, decision trees, and task force reports with recommendations qualify. Webinars and research publications do not. An institution's own news item enters the inventory as a boundary case, and is coded, where it carries quoted institutional language. A news item without such language is excluded.
 3. AI as object. The document addresses the use of AI tools, whatever term it uses (generative AI, artificial intelligence, a named product). An integrity code with no mention of AI fails this test, and the institution log records it as an absence, because the absence is itself a finding.
 4. Public availability. The document is reachable without a login. Documents identified behind a login are recorded with the status Located behind login and do not enter reported figures.
 
@@ -31,7 +31,7 @@ Every row carries one status. Only rows marked Verified enter reported figures.
 | Located behind login | The document exists, but reading it requires institutional credentials. |
 | Not reachable | The document exists, but the site blocked reading it. |
 | Dead link on recheck | The document was verified once and was unreachable on a later check. |
-| Excluded (news) | A news item reporting guidance. It is kept so the trace to the source document stays visible, and it never enters counts. |
+| Excluded (news) | A news item with no quoted institutional language. It stays visible and never enters counts. |
 
 Unverified rows stay in the data so a reader sees what has been searched and what remains open.
 
