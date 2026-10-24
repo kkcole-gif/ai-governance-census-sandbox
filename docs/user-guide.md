@@ -100,4 +100,4 @@ The CC BY 4.0 license covers the compilation, coding, and documentation. Quoted 
 
 ## 8. Corrections and missing documents
 
-Institutions revise their AI documents often. To report a correction, a newer version, or a document the census missed, open an issue on the GitHub repository with the institution, the document's address, and what should change. Every report is checked against the source before the data changes, and the change is recorded in the next release.
+Institutions revise their AI documents often. To report a correction, a newer version, a broken link, or a document the census missed, use the [reporting form](https://docs.google.com/forms/d/e/1FAIpQLSfK8B4oqRNt_kNkRTaDm8G2Kt-vkDXZmajS4jcLUX75kF_O6w/viewform). For other questions, write to kkcole2@ncsu.edu. Each report is checked against the source document before the data changes, and changes appear in the next release.
