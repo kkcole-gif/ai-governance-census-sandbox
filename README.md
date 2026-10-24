@@ -1,6 +1,6 @@
 # AI Governance Census of US Colleges and Universities
 
-A stratified census of the documents through which US colleges and universities govern artificial intelligence: policies, honor code clauses, syllabus requirements, teaching and student guidance, IT and data rules, procurement and licensing announcements, committee reports, and strategic initiatives. The sample of 334 institutions is drawn from the 2025 Carnegie Classifications. The census is directed by Kirsti Cole (North Carolina State University), who verifies every document before it enters the corpus of record.
+A stratified census of the documents through which US colleges and universities govern artificial intelligence: policies, honor code clauses, syllabus requirements, teaching and student guidance, IT and data rules, procurement and licensing announcements, committee reports, and strategic initiatives. The sample of 334 institutions is drawn from the 2025 Carnegie Classifications.
 
 Status: pilot complete and verified (10 institutions, 49 documents, October 2026). The full census is in progress. Version 1.0 will release the verified inventory together with specification-scale scores from the coding pass.
 

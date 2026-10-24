@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Governance Census</title>
+<meta name="description" content="A stratified census of the documents through which US colleges and universities govern artificial intelligence.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<style>
+:root{--bg:#ffffff;--fg:#1d2330;--muted:#5b6474;--line:#e3e6eb;--soft:#f5f6f8;--accent:#1f4e79;--accent-soft:#e8eff6;--warn:#8a4b08;--warn-soft:#fbf1e4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#14171c;--fg:#e8eaee;--muted:#a3abb8;--line:#2c323b;--soft:#1c2027;--accent:#8fb8de;--accent-soft:#1f2b38;--warn:#e4b072;--warn-soft:#2e2418}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid var(--line);padding:28px 0 20px}
+h1{font-size:1.6rem;margin:0 0 6px;font-weight:650}
+.lede{color:var(--muted);margin:0;max-width:760px}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-top:18px}
+nav button{border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:7px 14px;border-radius:6px;font:inherit;font-size:.92rem;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+main{padding:22px 0 60px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:20px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.stat b{display:block;font-size:1.5rem;font-weight:650}
+.stat span{color:var(--muted);font-size:.85rem}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.filters select,.filters input{font:inherit;font-size:.9rem;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);max-width:100%}
+.filters input{flex:1 1 220px}
+.card{border:1px solid var(--line);border-radius:8px;margin-bottom:10px}
+.card summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.card summary::-webkit-details-marker{display:none}
+.card summary h3{margin:0;font-size:1.02rem;font-weight:600;flex:1 1 260px}
+.meta{color:var(--muted);font-size:.85rem}
+.pill{display:inline-block;font-size:.75rem;padding:1px 8px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--muted);margin-right:4px}
+.pill.v{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.pill.w{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.docs{border-top:1px solid var(--line);padding:4px 14px 12px}
+.doc{padding:10px 0;border-bottom:1px solid var(--line)}
+.doc:last-child{border-bottom:0}
+.doc h4{margin:0 0 3px;font-size:.95rem;font-weight:600}
+.doc blockquote{margin:6px 0;padding-left:10px;border-left:3px solid var(--line);color:var(--muted);font-size:.9rem}
+.doc .c{background:var(--warn-soft);color:var(--warn);padding:6px 9px;border-radius:6px;font-size:.88rem;margin-top:6px}
+.prose{max-width:760px}
+.prose table{border-collapse:collapse;width:100%;font-size:.9rem;display:block;overflow-x:auto}
+.prose th,.prose td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.cite{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:14px;font-size:.95rem}
+.btn{border:1px solid var(--accent);background:var(--bg);color:var(--accent);padding:6px 12px;border-radius:6px;font:inherit;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-block;margin:8px 8px 0 0}
+.note{color:var(--muted);font-size:.85rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap">
+  <h1>AI Governance Census of US Colleges and Universities</h1>
+  <p class="lede">Documents through which US colleges and universities govern the use of artificial intelligence, recorded one row per document, with issuing office, dates, a quoted passage, verification status, and any contradiction with another document at the same institution. Sample: 334 institutions drawn from the 2025 Carnegie Classifications.</p>
+  <nav role="tablist">
+   <button role="tab" data-tab="inst" aria-selected="true">Institutions</button>
+   <button role="tab" data-tab="contra" aria-selected="false">Contradictions</button>
+   <button role="tab" data-tab="guide" aria-selected="false">User guide</button>
+   <button role="tab" data-tab="cite" aria-selected="false">Cite and download</button>
+  </nav>
+ </div>
+</header>
+<main class="wrap">
+ <section id="inst">
+  <div class="stats" id="stats"></div>
+  <div class="filters">
+   <input id="q" type="search" placeholder="Search institutions, titles, quoted passages">
+   <select id="fStratum"><option value="">All strata</option></select>
+   <select id="fType"><option value="">All document types</option></select>
+   <select id="fOffice"><option value="">All issuing offices</option></select>
+   <select id="fSE"><option value="">Standalone and embedded</option><option>Standalone</option><option>Embedded</option></select>
+   <select id="fStatus"><option value="Verified">Verified only</option><option value="">All statuses</option></select>
+  </div>
+  <div id="list"></div>
+ </section>
+ <section id="contra" hidden>
+  <p class="prose">Institutions often state different rules for AI use across their own documents. Each conflict below is recorded on the document that states it, with the other document named. Conflicts are counted at the row level so they are countable across the census.</p>
+  <div id="contraList"></div>
+ </section>
+ <section id="guide" hidden><div class="prose" id="guideBody">Loading the user guide.</div></section>
+ <section id="cite" hidden>
+  <div class="prose">
+   <h2>Cite</h2>
+   <div class="cite" id="citeText">Cole, K. (2026). AI Governance Census of US Colleges and Universities (Version 0.1-pilot) [Data set]. Zenodo. DOI assigned at version 1.0.</div>
+   <button class="btn" id="copy">Copy citation</button>
+   <p class="note">Each release receives its own DOI on Zenodo. Cite the version you used.</p>
+   <h2>Download</h2>
+   <a class="btn" href="data/pilot_inventory.csv" download>Document inventory (CSV)</a>
+   <a class="btn" href="data/pilot_institution_log.csv" download>Institution log (CSV)</a>
+   <a class="btn" href="data/sample_drawn_institutions.csv" download>Drawn institutions (CSV)</a>
+   <h2>License</h2>
+   <p>The compilation, coding, and documentation are released under CC BY 4.0. Quoted passages remain the work of their issuing institutions and appear in short excerpt for research and criticism.</p>
+   <h2>Report a correction</h2>
+   <p>To report a newer version, a correction, or a missing document, open an issue on the <a href="https://github.com/kkcole-gif/ai-governance-census/issues">project repository</a> with the institution, the document's address, and the change.</p>
+  </div>
+ </section>
+</main>
+<script>
+const EMPTY=/^(|n|no|none|none found|none noted|not assessed|undetermined|unknown|n\/a)$/i;
+let DOCS=[],LOG=[];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=u=>String(u||'').replace(/\.0$/,'');
+function load(p){return new Promise(r=>Papa.parse(p,{download:true,header:true,skipEmptyLines:true,complete:x=>r(x.data)}))}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));['inst','contra','guide','cite'].forEach(t=>$(t).hidden=t!==b.dataset.tab);try{localStorage.setItem('tab',b.dataset.tab)}catch(e){}});
+function fill(sel,vals){[...new Set(vals)].filter(Boolean).sort().forEach(v=>{const o=document.createElement('option');o.textContent=v;sel.appendChild(o)})}
+function statusPill(s){return `<span class="pill ${s==='Verified'?'v':'w'}">${esc(s)}</span>`}
+function docHTML(d,showInst){
+ const c=EMPTY.test((d['Contradiction with another document']||'').trim())?'':`<div class="c">Contradiction: ${esc(d["Contradiction with another document"].replace(/^Y( \([^)]*\))?:\s*/,""))}</div>`;
+ const q=d['Key Framing Language']&&!/^not captured$/i.test(d['Key Framing Language'])?`<blockquote>${esc(d['Key Framing Language'])}</blockquote>`:'';
+ return `<div class="doc"><h4>${showInst?esc(d.Institution)+': ':''}<a href="${esc(d.URL)}" target="_blank" rel="noopener">${esc(d['Document title'])}</a></h4>
+ <div class="meta">${statusPill(d.Status)}<span class="pill">${esc(d['Document type'])}</span><span class="pill">${esc(d['Standalone or embedded'])}</span> ${esc(d['Issuing office'])}${d['Date issued']?' · issued '+esc(d['Date issued']):''}${d['Date last revised']&&!EMPTY.test(d['Date last revised'])?' · revised '+esc(d['Date last revised']):''}</div>
+ ${q}${d['Policy stance (open)']?`<div class="meta">${esc(d['Policy stance (open)'])}</div>`:''}${c}</div>`}
+function render(){
+ const q=$('q').value.toLowerCase(),fS=$('fStratum').value,fT=$('fType').value,fO=$('fOffice').value,fE=$('fSE').value,fV=$('fStatus').value;
+ const docs=DOCS.filter(d=>(!fS||d.Stratum===fS)&&(!fT||d['Document type']===fT)&&(!fO||d['Issuing office']===fO)&&(!fE||d['Standalone or embedded']===fE)&&(!fV||d.Status===fV)&&(!q||(d.Institution+' '+d['Document title']+' '+d['Key Framing Language']).toLowerCase().includes(q)));
+ const by={};docs.forEach(d=>(by[uid(d.UNITID)]=by[uid(d.UNITID)]||[]).push(d));
+ const insts=LOG.filter(l=>by[uid(l.UNITID)]||(!fT&&!fO&&!fE&&!q&&(!fS||l.Stratum===fS))).sort((a,b)=>a.Institution.localeCompare(b.Institution));
+ const ver=DOCS.filter(d=>d.Status==='Verified');const vb={};ver.forEach(d=>(vb[uid(d.UNITID)]=vb[uid(d.UNITID)]||[]).push(d));
+ const any=Object.keys(vb).length,sa=Object.values(vb).filter(a=>a.some(d=>d['Standalone or embedded']==='Standalone')).length,fp=Object.values(vb).filter(a=>a.some(d=>/^3 /.test(d['Document type']))).length;
+ $('stats').innerHTML=`<div class="stat"><b>${LOG.length}</b><span>institutions searched</span></div><div class="stat"><b>${ver.length}</b><span>verified documents</span></div><div class="stat"><b>${any}</b><span>institutions with any qualifying document</span></div><div class="stat"><b>${sa}</b><span>with a standalone document</span></div><div class="stat"><b>${fp}</b><span>with a formal policy naming AI (campus or system)</span></div>`;
+ $('list').innerHTML=insts.map(l=>{const ds=by[uid(l.UNITID)]||[];return `<details class="card"><summary><h3>${esc(l.Institution)}</h3><span class="meta">${esc(l.Stratum)} · ${ds.length} document${ds.length===1?'':'s'} shown · ${esc(l.Result)}</span></summary><div class="docs">${ds.map(d=>docHTML(d,false)).join('')||'<p class="note">No documents match the current filters.</p>'}${l['Absences and access notes']?`<p class="note">Search notes: ${esc(l['Absences and access notes'])}</p>`:''}</div></details>`}).join('')||'<p class="note">No institutions match the current filters.</p>';
+ const cs=DOCS.filter(d=>!EMPTY.test((d['Contradiction with another document']||'').trim()));
+ $('contraList').innerHTML=cs.map(d=>docHTML(d,true)).join('')||'<p class="note">No contradictions recorded.</p>';
+}
+(async()=>{
+ [DOCS,LOG]=await Promise.all([load('data/pilot_inventory.csv'),load('data/pilot_institution_log.csv')]);
+ fill($('fStratum'),LOG.map(l=>l.Stratum));fill($('fType'),DOCS.map(d=>d['Document type']));fill($('fOffice'),DOCS.map(d=>d['Issuing office']));
+ ['q','fStratum','fType','fOffice','fSE','fStatus'].forEach(i=>$(i).addEventListener('input',render));
+ render();
+ try{const t=localStorage.getItem('tab');if(t){const b=document.querySelector(`nav button[data-tab="${t}"]`);b&&b.click()}}catch(e){}
+ fetch('docs/user-guide.md').then(r=>r.text()).then(t=>$('guideBody').innerHTML=marked.parse(t)).catch(()=>$('guideBody').textContent='The user guide is available in the repository docs folder.');
+ $('copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('citeText').textContent);$('copy').textContent='Copied'};
+})();
+</script>
+</body>
+</html>
