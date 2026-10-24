@@ -57,15 +57,18 @@ main{padding:22px 0 60px}
   <h1>AI Governance Census of US Colleges and Universities</h1>
   <p class="lede">Documents through which US colleges and universities govern the use of artificial intelligence, recorded one row per document, with issuing office, dates, a quoted passage, verification status, and any contradiction with another document at the same institution. Sample: 334 institutions drawn from the 2025 Carnegie Classifications.</p>
   <nav role="tablist">
-   <button role="tab" data-tab="inst" aria-selected="true">Institutions</button>
+   <button role="tab" data-tab="about" aria-selected="true">About this census</button>
+   <button role="tab" data-tab="inst" aria-selected="false">Institutions</button>
    <button role="tab" data-tab="contra" aria-selected="false">Contradictions</button>
-   <button role="tab" data-tab="guide" aria-selected="false">User guide</button>
+   <button role="tab" data-tab="use" aria-selected="false">Using the data</button>
+   <button role="tab" data-tab="reading" aria-selected="false">Reading the census</button>
    <button role="tab" data-tab="cite" aria-selected="false">Cite and download</button>
   </nav>
  </div>
 </header>
 <main class="wrap">
- <section id="inst">
+ <section id="about"><div class="prose" id="aboutBody">Loading.</div></section>
+ <section id="inst" hidden>
   <div class="stats" id="stats"></div>
   <div class="filters">
    <input id="q" type="search" placeholder="Search institutions, titles, quoted passages">
@@ -81,7 +84,9 @@ main{padding:22px 0 60px}
   <p class="prose">Institutions often state different rules for AI use across their own documents. Each conflict below is recorded on the document that states it, with the other document named. Conflicts are counted at the row level so they are countable across the census.</p>
   <div id="contraList"></div>
  </section>
- <section id="guide" hidden><div class="prose" id="guideBody">Loading the user guide.</div></section>
+ <section id="use" hidden><div class="prose" id="useBody">Loading.</div></section>
+ <section id="reading" hidden><div class="prose" id="readingBody">Loading.</div></section>
+ <section id="guide" hidden><p><a href="#" id="backAbout">Back to About this census</a></p><div class="prose" id="guideBody">Loading the user guide.</div></section>
  <section id="cite" hidden>
   <div class="prose">
    <h2>Cite</h2>
@@ -103,10 +108,11 @@ main{padding:22px 0 60px}
 const EMPTY=/^(|n|no|none|none found|none noted|not assessed|undetermined|unknown|n\/a)$/i;
 let DOCS=[],LOG=[];
 const $=id=>document.getElementById(id);
+function showGuide(){document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected','false'));['about','inst','contra','use','reading','guide','cite'].forEach(t=>$(t).hidden=t!=='guide');window.scrollTo(0,0)}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=u=>String(u||'').replace(/\.0$/,'');
 function load(p){return new Promise(r=>Papa.parse(p,{download:true,header:true,skipEmptyLines:true,complete:x=>r(x.data)}))}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));['inst','contra','guide','cite'].forEach(t=>$(t).hidden=t!==b.dataset.tab);try{localStorage.setItem('tab',b.dataset.tab)}catch(e){}});
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));['about','inst','contra','use','reading','guide','cite'].forEach(t=>$(t).hidden=t!==b.dataset.tab);try{localStorage.setItem('tab',b.dataset.tab)}catch(e){}});
 function fill(sel,vals){[...new Set(vals)].filter(Boolean).sort().forEach(v=>{const o=document.createElement('option');o.textContent=v;sel.appendChild(o)})}
 function statusPill(s){return `<span class="pill ${s==='Verified'?'v':'w'}">${esc(s)}</span>`}
 function docHTML(d,showInst){
@@ -133,7 +139,9 @@ function render(){
  ['q','fStratum','fType','fOffice','fSE','fStatus'].forEach(i=>$(i).addEventListener('input',render));
  render();
  try{const t=localStorage.getItem('tab');if(t){const b=document.querySelector(`nav button[data-tab="${t}"]`);b&&b.click()}}catch(e){}
- fetch('docs/user-guide.md').then(r=>r.text()).then(t=>$('guideBody').innerHTML=marked.parse(t)).catch(()=>$('guideBody').textContent='The user guide is available in the repository docs folder.');
+ const md=(f,el)=>fetch(f).then(r=>r.text()).then(t=>{$(el).innerHTML=marked.parse(t);$(el).querySelectorAll('a[href="#guide"]').forEach(a=>a.onclick=e=>{e.preventDefault();showGuide()})}).catch(()=>$(el).textContent='This page is available in the repository docs folder.');
+ md('docs/about.md','aboutBody');md('docs/using-the-data.md','useBody');md('docs/reading-the-census.md','readingBody');md('docs/user-guide.md','guideBody');
+ $('backAbout').onclick=e=>{e.preventDefault();document.querySelector('nav button[data-tab="about"]').click()};
  $('copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('citeText').textContent);$('copy').textContent='Copied'};
 })();
 </script>
