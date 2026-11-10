@@ -4,7 +4,7 @@ const T=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)
 const crc=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=T[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0};
 const enc=new TextEncoder();const parts=[];const cd=[];let off=0;const ok=[],bad=[];let total=0;
 for(const [name,u] of its){try{
- const r=await fetch(u,{credentials:'include'});const b=new Uint8Array(await r.arrayBuffer());
+ const r=await fetch(u,{credentials:'omit'});const b=new Uint8Array(await r.arrayBuffer());
  if(!r.ok){bad.push(name.slice(-4)+':s'+r.status);continue}
  if(b.length>60e6||total+b.length>180e6){bad.push(name.slice(-4)+':big');continue}
  const h4=String.fromCharCode(...b.slice(0,4));const ext=h4==='%PDF'?'.pdf':(h4.startsWith('PK')?'.docx':'.html');
